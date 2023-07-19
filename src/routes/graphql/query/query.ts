@@ -2,8 +2,6 @@ import { FastifyInstance } from "fastify";
 import { GraphQLList, GraphQLObjectType, GraphQLFloat, GraphQLString, GraphQLInt , GraphQLBoolean, GraphQLID, GraphQLEnumType, subscribe} from "graphql";
 import { UUIDType } from "../types/uuid.js";
 
-
-
 export const enumMemberId = new GraphQLEnumType({
     name: 'MemberTypeId',
     values: {
@@ -49,8 +47,6 @@ export const profiles = new GraphQLObjectType({
         },
     }
 })
-
-
 
 export const posts = new GraphQLObjectType({
     name: "Posts",
@@ -140,11 +136,6 @@ export const user = new GraphQLObjectType({
                 }
         }
     })})
-    //   
-    //   }
-    // },
-//   });
-
 
 
 export const query = new GraphQLObjectType({

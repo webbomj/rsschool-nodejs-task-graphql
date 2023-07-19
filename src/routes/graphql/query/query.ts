@@ -1,5 +1,5 @@
 import { FastifyInstance } from "fastify";
-import { GraphQLList, GraphQLObjectType, GraphQLFloat, GraphQLString, GraphQLInt , GraphQLBoolean, GraphQLID, GraphQLEnumType, subscribe} from "graphql";
+import { GraphQLList, GraphQLObjectType, GraphQLFloat, GraphQLString, GraphQLInt , GraphQLBoolean, GraphQLEnumType } from "graphql";
 import { UUIDType } from "../types/uuid.js";
 
 export const enumMemberId = new GraphQLEnumType({
@@ -67,15 +67,6 @@ export const subscribed = new GraphQLObjectType({
     }
 })
 
-// export const userSubscribed = new GraphQLObjectType({
-//     name: 'userSubscribedTo',
-//     fields: {
-//         id: {type: UUIDType},
-//         name: { type: GraphQLString},
-//         balance: { type: GraphQLFloat},
-//     }
-// })
-
 export const user = new GraphQLObjectType({
     name: "User",
     fields: () =>  ({
@@ -90,11 +81,6 @@ export const user = new GraphQLObjectType({
                     userId: obj.id
                 }
             })
-
-            // if (profile === null) {
-            //     throw ctx.httpErrors.notFound();
-            // }
-
             return profile ? profile : null
         }
       },
@@ -136,7 +122,6 @@ export const user = new GraphQLObjectType({
                 }
         }
     })})
-
 
 export const query = new GraphQLObjectType({
     name: 'RootQueryType',
@@ -188,9 +173,6 @@ export const query = new GraphQLObjectType({
                     }
                 })
 
-                // if (!profile) {
-                //     throw ctx.httpErrors.notFound()
-                // }
                 return profile ? profile : null
             }
             
@@ -205,9 +187,7 @@ export const query = new GraphQLObjectType({
                         id: args.id
                     }
                 })
-                // if (!post) {
-                //     throw ctx.httpErrors.notFound()
-                // }
+
                 return post ? post : null
             }
         },
@@ -221,9 +201,7 @@ export const query = new GraphQLObjectType({
                     id: args.id
                 }
             })
-            // if (!user) {
-            //     throw ctx.httpErrors.notFound()
-            // } 
+
             return user ? user: null
             }
         }

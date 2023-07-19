@@ -1,5 +1,5 @@
 import { FastifyInstance } from "fastify";
-import { GraphQLList, GraphQLObjectType, GraphQLFloat, GraphQLString, GraphQLInt , GraphQLBoolean, GraphQLID, GraphQLEnumType} from "graphql";
+import { GraphQLList, GraphQLObjectType, GraphQLFloat, GraphQLString, GraphQLInt , GraphQLBoolean, GraphQLID, GraphQLEnumType, subscribe} from "graphql";
 import { UUIDType } from "../types/uuid.js";
 
 
@@ -62,9 +62,27 @@ export const posts = new GraphQLObjectType({
     }
 })
 
+export const subscribed = new GraphQLObjectType({
+    name: "subscribedToUser",
+    fields: {
+        id: {type: UUIDType},
+        name: { type: GraphQLString},
+        balance: { type: GraphQLFloat},
+    }
+})
+
+// export const userSubscribed = new GraphQLObjectType({
+//     name: 'userSubscribedTo',
+//     fields: {
+//         id: {type: UUIDType},
+//         name: { type: GraphQLString},
+//         balance: { type: GraphQLFloat},
+//     }
+// })
+
 export const user = new GraphQLObjectType({
     name: "User",
-    fields: {
+    fields: () =>  ({
       id: { type: UUIDType },
       name: { type: GraphQLString },
       balance: { type: GraphQLFloat },
@@ -77,11 +95,11 @@ export const user = new GraphQLObjectType({
                 }
             })
 
-            if (profile === null) {
-                throw ctx.httpErrors.notFound();
-            }
+            // if (profile === null) {
+            //     throw ctx.httpErrors.notFound();
+            // }
 
-            return profile
+            return profile ? profile : null
         }
       },
       posts: {
@@ -93,9 +111,41 @@ export const user = new GraphQLObjectType({
                 }
             })
         }
-      }
-    },
-  });
+      },
+      subscribedToUser: {
+        type: new GraphQLList(user),
+        resolve: async (obj, args, ctx) => {
+            return await ctx.prisma.user.findMany({
+                where: {
+                  userSubscribedTo: {
+                    some: {
+                      authorId: obj.id,
+                    },
+                  },
+                },
+              });
+      }},
+      userSubscribedTo: {
+            type: new GraphQLList(user),
+            resolve: async (obj, args, ctx) => {
+                return await ctx.prisma.user.findMany({
+                    where: {
+                      subscribedToUser: {
+                        some: {
+                          subscriberId: obj.id,
+                        },
+                      },
+                    },
+                  });
+                }
+        }
+    })})
+    //   
+    //   }
+    // },
+//   });
+
+
 
 export const query = new GraphQLObjectType({
     name: 'RootQueryType',
@@ -147,10 +197,10 @@ export const query = new GraphQLObjectType({
                     }
                 })
 
-                if (!profile) {
-                    throw ctx.httpErrors.notFound()
-                }
-                return profile
+                // if (!profile) {
+                //     throw ctx.httpErrors.notFound()
+                // }
+                return profile ? profile : null
             }
             
         },
@@ -164,10 +214,10 @@ export const query = new GraphQLObjectType({
                         id: args.id
                     }
                 })
-                if (!post) {
-                    throw ctx.httpErrors.notFound()
-                }
-                return post
+                // if (!post) {
+                //     throw ctx.httpErrors.notFound()
+                // }
+                return post ? post : null
             }
         },
         //get user by id
@@ -180,10 +230,10 @@ export const query = new GraphQLObjectType({
                     id: args.id
                 }
             })
-            if (!user) {
-                throw ctx.httpErrors.notFound()
-            } 
-            return user
+            // if (!user) {
+            //     throw ctx.httpErrors.notFound()
+            // } 
+            return user ? user: null
             }
         }
     }
